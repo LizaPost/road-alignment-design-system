@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Road Alignment Design System</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="site-title">
+        <h1>Road Alignment Design System</h1>
+        <p>Terrain analysis and preliminary road design</p>
+    </div>
+</header>
+
+<main class="layout">
+
+    <!-- TOP LEFT: TERRAIN AND ROAD ALIGNMENT CONTROLS -->
+    <aside class="sidebar">
+
+        <!-- TERRAIN CONTROLS -->
+        <section class="panel terrain-controls-panel">
+            <div class="panel-heading">
+                <h2>Terrain</h2>
+            </div>
+
+            <p class="panel-description">
+                Load the survey data used for terrain analysis.
+            </p>
+
+            <!-- import survey data from csv file -->
+            <div class="control-group">
+                <label for="terrainDataset">Terrain dataset</label>
+                <select id="terrainDataset" >
+                    <option value="">Loading datasets...</option>
+                </select>
+
+                <button id="importTerrainButton" type="button" class="secondary-button">Import CSV</button>
+            </div>
+
+            <div class="data-summary">
+                <span>Survey points</span>
+                <strong id="pointCount">—</strong>
+            </div>
+        </section>
+
+        <!-- ROAD ALIGNMENT CONTROLS -->
+        <section class="panel alignment-controls-panel">
+            <div class="panel-heading">
+                <h2>Road Alignment</h2>
+            </div>
+
+            <p class="panel-description">
+                Select the start and end points on the Terrain Plan.
+            </p>
+
+            <div class="control-group">
+                <button id="selectStartButton"
+                        type="button"
+                        class="secondary-button">
+                    Select Start Point
+                </button>
+
+                <p id="startCoordinates" class="coordinate-value">
+                    Not selected
+                </p>
+            </div>
+
+            <div class="control-group">
+                <button id="selectEndButton"
+                        type="button"
+                        class="secondary-button">
+                    Select End Point
+                </button>
+
+                <p id="endCoordinates" class="coordinate-value">
+                    Not selected
+                </p>
+            </div>
+
+            <button id="generateButton"
+                    type="button"
+                    class="primary-button">
+                Generate Alternatives
+            </button>
+        </section>
+
+    </aside>
+
+    <!-- TOP RIGHT: TERRAIN PLAN -->
+    <section class="panel terrain-card">
+
+        <div class="card-header">
+
+            <div class="terrain-heading">
+                <h2>Terrain Plan</h2>
+                <p id="status">Load terrain to begin</p>
+            </div>
+
+            <!-- ZOOM AND NAVIGATION -->
+            <div class="zoom-toolbar"
+                 role="group"
+                 aria-label="Terrain navigation">
+
+                <button id="zoomOutButton"
+                        type="button"
+                        aria-label="Zoom out">−</button>
+
+                <button id="zoomInButton"
+                        type="button"
+                        aria-label="Zoom in">+</button>
+
+                <button id="fitTerrainButton"
+                        type="button"
+                        aria-label="Fit to view">
+                    Fit to View
+                </button>
+            </div>
+
+            <!-- TERRAIN DISPLAY OPTIONS -->
+            <div class="display-toolbar"
+                 role="group"
+                 aria-label="Terrain display options">
+
+                <label class="display-option">
+                    <input type="checkbox" id="showPoints" checked>
+                    <span>Survey points</span>
+                </label>
+
+                <label class="display-option">
+                    <input type="checkbox" id="showContours" checked>
+                    <span>Contours</span>
+                </label>
+
+                <label class="display-option">
+                    <input type="checkbox" id="showAlignments" checked>
+                    <span>Alignments</span>
+                </label>
+            </div>
+
+        </div>
+
+        <!-- TERRAIN SVG -->
+        <div class="svg-container">
+            <svg id="terrainSvg"
+                 xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 800 600"
+                 preserveAspectRatio="xMidYMid meet"
+                 role="img"
+                 aria-label="Terrain plan with survey points, contours, and road alignments">
+
+                <g id="viewport">
+                    <g id="gridLayer"></g>
+                    <g id="terrainLayer"></g>
+                    <g id="contourLayer"></g>
+                    <g id="pointLayer"></g>
+                    <g id="selectedPointLayer"></g>
+                    <g id="alignmentLayer"></g>
+                    <g id="projectPointLayer"></g>
+                </g>
+
+            </svg>
+        </div>
+
+    </section>
+
+    <!-- BOTTOM LEFT: ALTERNATIVE ANALYSIS -->
+    <section class="panel analysis-panel">
+
+        <div class="panel-heading">
+            <h2>Alternative Analysis</h2>
+        </div>
+
+        <p class="panel-description">
+            Review and compare the generated road alignments.
+        </p>
+
+        <div id="alternativeResults" class="alternative-results">
+            <p class="empty-message">
+                Generate alternatives to view the analysis.
+            </p>
+        </div>
+
+    </section>
+
+    <!-- BOTTOM RIGHT: LONGITUDINAL PROFILE -->
+    <section class="panel profile-panel">
+
+        <div class="panel-heading profile-heading">
+
+            <div>
+                <h2 id="profileTitle">Longitudinal Profile</h2>
+                <p class="panel-description">
+                    View the elevation profile of the selected alignment.
+                </p>
+            </div>
+
+            <div class="profile-controls">
+                <label id="alternativeLabel">Alternative</label>
+
+                <div class="custom-select" id="alternativeDropdown">
+
+                    <!-- Visible dropdown button -->
+                    <button
+                            type="button"
+                            class="custom-select-trigger"
+                            id="alternativeDropdownTrigger"
+                            aria-haspopup="listbox"
+                            aria-expanded="false"
+                            aria-labelledby="alternativeLabel alternativeDropdownValue">
+
+            <span
+                    class="selected-alternative-color"
+                    id="selectedAlternativeColor">
+            </span>
+
+                        <span id="alternativeDropdownValue">
+                Select an alternative
+            </span>
+
+                        <span class="dropdown-arrow">▾</span>
+                    </button>
+
+                    <!-- Dropdown options -->
+                    <div
+                            class="custom-select-menu"
+                            id="alternativeDropdownMenu"
+                            role="listbox"
+                            hidden>
+                    </div>
+
+                    <!-- Keep the original select for existing application logic -->
+                    <select id="alternativeSelect" class="visually-hidden"
+                            aria-hidden="true" tabindex="-1">
+                    </select>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- PROFILE SVG AND DATA TABLE -->
+        <div class="profile-svg-container">
+            <svg
+                    id="profileSvg"
+                    xmlns="http://www.w3.org/2000/svg"
+                    role="img"
+                    aria-label="Longitudinal road alignment profile and engineering data table"
+                    width="800"
+                    height="500"
+                    viewBox="0 0 800 500"
+            >
+                <g id="profileLayer"></g>
+            </svg>
+        </div>
+    </section>
+
+</main>
+
+<script type="module" src="js/app.js"></script>
+
+</body>
+</html>
+

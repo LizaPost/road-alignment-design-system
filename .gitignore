@@ -1,0 +1,34 @@
+# Maven
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Java
+*.class
+*.log
+hs_err_pid*
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Local application configuration
+application-local.properties
+application-local.yml
+
+# Local H2 database files
+*.mv.db
+*.trace.db
+
+# Operating system
+.DS_Store
+Thumbs.db
+Desktop.ini

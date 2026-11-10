@@ -1,0 +1,875 @@
+/* ---------------------------------------------------------
+   1. DESIGN VARIABLES
+   --------------------------------------------------------- */
+
+:root {
+    --color-primary: #0e4532;
+    --color-primary-light: #176b4d;
+    --color-background: #f4f7f5;
+    --color-surface: #ffffff;
+    --color-border: #dce5df;
+    --color-text: #20332a;
+    --color-muted: #6b7b72;
+    --color-accent: #a9d5c2;
+    --color-accent-light: #e7f1ec;
+    --color-danger: #b54747;
+
+    --sidebar-width: 270px;
+    --layout-gap: 16px;
+    --panel-padding: 16px;
+
+    --radius-small: 6px;
+    --radius-medium: 10px;
+
+    --font-smallest: 0.65rem;
+    --font-small: 0.82rem;
+    --font-body: 0.92rem;
+    --font-heading: 1.05rem;
+
+    --shadow-panel: 0 2px 8px rgb(14 69 50 / 5%);
+}
+
+
+/* ---------------------------------------------------------
+   2. GLOBAL STYLES
+   --------------------------------------------------------- */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-width: 320px;
+}
+
+body {
+    margin: 0;
+    background: var(--color-background);
+    color: var(--color-text);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: var(--font-body);
+    line-height: 1.45;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+h1,
+h2,
+p {
+    margin-top: 0;
+}
+
+h2 {
+    margin-bottom: 0;
+    font-size: var(--font-heading);
+    font-weight: 650;
+    line-height: 1.3;
+}
+
+
+/* ---------------------------------------------------------
+   3. PAGE HEADER
+   --------------------------------------------------------- */
+
+.site-header {
+    display: flex;
+    align-items: center;
+    min-height: 76px;
+    padding: 14px 24px;
+    background: var(--color-primary);
+    color: #ffffff;
+}
+
+.site-title h1 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+}
+
+.site-title p {
+    margin: 4px 0 0;
+    color: #d2e7dc;
+    font-size: var(--font-small);
+}
+
+
+/* ---------------------------------------------------------
+   4. MAIN TWO-COLUMN, TWO-ROW GRID
+   --------------------------------------------------------- */
+
+.layout {
+    display: grid;
+
+    grid-template-columns:
+        var(--sidebar-width)
+        minmax(0, 1fr);
+
+    grid-template-areas:
+        "sidebar terrain"
+        "analysis profile";
+
+    grid-template-rows: auto auto;
+
+    align-items: stretch;
+    gap: var(--layout-gap);
+
+    width: 100%;
+    padding: var(--layout-gap);
+}
+
+/* Top-left: Terrain and Road Alignment controls */
+
+.sidebar {
+    grid-area: sidebar;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--layout-gap);
+
+    min-width: 0;
+}
+
+/* Top-right: Terrain Plan */
+
+.terrain-card {
+    grid-area: terrain;
+
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Bottom-left: Alternative Analysis */
+
+.analysis-panel {
+    grid-area: analysis;
+    align-self: stretch;
+    height: 100%;
+    min-width: 0;
+}
+
+/* Bottom-right: Longitudinal Profile */
+
+.profile-panel {
+    grid-area: profile;
+    align-self: stretch;
+    height: 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* ---------------------------- custom alternative dropdown ---------------------------- */
+
+.custom-select {
+    position: relative;
+    width: 170px;
+    min-width: 150px;
+}
+
+/* Main dropdown button */
+
+.custom-select-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    min-height: 34px;
+    padding: 6px 9px;
+
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-small);
+
+    color: var(--color-text);
+    font-size: var(--font-small);
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.custom-select-trigger:hover {
+    border-color: var(--color-primary);
+}
+
+/* Selected alternative color indicator */
+
+.selected-alternative-color {
+    display: inline-block;
+
+    width: 24px;
+    height: 3px;
+
+    flex-shrink: 0;
+    border-radius: 2px;
+}
+
+/* Dropdown arrow */
+
+.dropdown-arrow {
+    margin-left: auto;
+    color: var(--color-muted);
+}
+
+/* Dropdown menu */
+
+.custom-select-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+
+    width: 100%;
+    padding: 4px;
+
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-small);
+
+    box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+
+    z-index: 100;
+}
+
+.custom-select-menu[hidden] {
+    display: none;
+}
+
+/* Individual options */
+
+.custom-select-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    padding: 8px;
+
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+
+    color: var(--color-text);
+    font-size: var(--font-small);
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.custom-select-option:hover {
+    background: var(--color-surface, #f2f5f3);
+}
+
+.custom-select-option[aria-selected="true"] {
+    background: #e7f1ec;
+    font-weight: 600;
+}
+
+/* Colored line next to each alternative */
+
+.alternative-color-line {
+    display: inline-block;
+
+    width: 28px;
+    height: 3px;
+
+    flex-shrink: 0;
+    border-radius: 2px;
+}
+
+/* Keep native select available to JavaScript but visually hidden */
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ---------------------------------------------------------
+   5. SHARED PANEL STYLES
+   --------------------------------------------------------- */
+
+.panel {
+    min-width: 0;
+    width: 100%;
+    padding: var(--panel-padding);
+
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-panel);
+}
+
+.panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    min-width: 0;
+    margin-bottom: 12px;
+}
+
+.panel-description {
+    margin: 0 0 14px;
+    color: var(--color-muted);
+    font-size: var(--font-smallest);
+    line-height: 1.5;
+}
+
+
+/* ---------------------------------------------------------
+   6. BUTTONS
+   --------------------------------------------------------- */
+
+.primary-button,
+.secondary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 38px;
+    padding: 9px 12px;
+
+    border: 1px solid transparent;
+    border-radius: var(--radius-small);
+
+    font-size: var(--font-small);
+    font-weight: 600;
+    line-height: 1.3;
+    text-align: center;
+
+    transition:
+            background-color 0.15s ease,
+            border-color 0.15s ease;
+}
+
+.primary-button {
+    background: var(--color-primary);
+    color: #ffffff;
+}
+
+.primary-button:hover:not(:disabled) {
+    background: var(--color-primary-light);
+}
+
+.secondary-button {
+    background: var(--color-accent-light);
+    border-color: #c8dfd2;
+    color: var(--color-primary);
+}
+
+.secondary-button:hover:not(:disabled) {
+    background: #d9ebe2;
+    border-color: var(--color-accent);
+}
+
+
+/* ---------------------------------------------------------
+   7. TERRAIN CONTROLS
+   --------------------------------------------------------- */
+
+.terrain-controls-panel .primary-button {
+    margin-bottom: 14px;
+}
+
+.data-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+
+    font-size: var(--font-small);
+}
+
+.data-summary span {
+    color: var(--color-muted);
+}
+
+.data-summary strong {
+    color: var(--color-primary);
+    font-size: 0.95rem;
+    font-variant-numeric: tabular-nums;
+}
+
+
+/* ---------------------------------------------------------
+   8. ROAD ALIGNMENT CONTROLS
+   --------------------------------------------------------- */
+
+.control-group {
+    margin-bottom: 14px;
+}
+
+.control-group .secondary-button {
+    margin-bottom: 6px;
+}
+
+.coordinate-value {
+    min-height: 18px;
+    margin: 0;
+
+    color: var(--color-muted);
+    font-size: var(--font-smallest);
+    line-height: 1.0;
+    overflow-wrap: anywhere;
+    font-variant-numeric: tabular-nums;
+}
+
+.alignment-controls-panel > .primary-button {
+    margin-top: 2px;
+}
+
+
+/* ---------------------------------------------------------
+   9. ALTERNATIVE ANALYSIS
+   --------------------------------------------------------- */
+
+.alternative-results {
+    min-width: 0;
+    width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.empty-message {
+    margin: 0;
+    padding: 12px;
+
+    background: var(--color-accent-light);
+    border-radius: var(--radius-small);
+
+    color: var(--color-muted);
+    font-size: var(--font-smallest);
+    line-height: 1.5;
+}
+
+.alternative-results > * {
+    max-width: 100%;
+}
+
+.alternative-results table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-small);
+}
+
+.alternative-results th,
+.alternative-results td {
+    padding: 7px 5px;
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+.alternative-results th {
+    color: var(--color-muted);
+    font-weight: 600;
+}
+
+
+/* ---------------------------------------------------------
+   10. TERRAIN PLAN HEADER
+   --------------------------------------------------------- */
+
+.card-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+
+    width: 100%;
+    min-width: 0;
+    padding: 16px 18px;
+}
+
+.terrain-heading {
+    flex: 1 1 160px;
+    min-width: 0;
+}
+
+.terrain-heading h2 {
+    margin: 0;
+}
+
+.terrain-heading p,
+.terrain-heading #status {
+    margin: 4px 0 0;
+    color: var(--color-muted);
+    font-size: var(--font-small);
+    overflow-wrap: anywhere;
+}
+
+
+/* ---------------------------------------------------------
+   11. TERRAIN DISPLAY OPTIONS
+   --------------------------------------------------------- */
+
+.display-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+
+    min-width: 0;
+}
+
+.display-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    color: var(--color-text);
+    font-size: var(--font-small);
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.display-option input {
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    accent-color: var(--color-primary-light);
+}
+
+
+/* ---------------------------------------------------------
+   12. TERRAIN SVG AND ZOOM CONTROLS
+   --------------------------------------------------------- */
+
+.svg-container {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    width: 100%;
+
+    overflow: hidden;
+    background: #fbfcfb;
+    border-radius: 0 0 var(--radius-medium) var(--radius-medium);
+}
+
+#terrainSvg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+
+    touch-action: none;
+    user-select: none;
+}
+
+/* Terrain zoom and navigation controls */
+
+.zoom-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.zoom-toolbar button {
+    min-width: 36px;
+    min-height: 34px;
+    padding: 6px 10px;
+
+    border: 1px solid #d9e2dc;
+    border-radius: var(--radius-small);
+
+    background: #ffffff;
+    color: var(--color-primary);
+
+    font-size: 15px;
+    cursor: pointer;
+
+    transition: background-color 0.2s ease;
+}
+
+.zoom-toolbar button:hover {
+    background: var(--color-accent-light);
+}
+
+.zoom-toolbar button:focus-visible {
+    outline: 2px solid var(--color-primary-light);
+    outline-offset: 2px;
+}
+
+
+/* ---------------------------------------------------------
+   13. LONGITUDINAL PROFILE
+   --------------------------------------------------------- */
+
+.profile-heading {
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.profile-heading > div:first-child {
+    flex: 1 1 240px;
+    min-width: 0;
+}
+
+.profile-heading h2 {
+    margin: 0;
+}
+
+.profile-heading .panel-description {
+    margin: 4px 0 0;
+}
+
+.profile-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    min-width: 0;
+}
+
+.profile-controls label {
+    color: var(--color-muted);
+    font-size: var(--font-small);
+}
+
+.profile-controls select {
+    max-width: 100%;
+    min-width: 150px;
+    min-height: 34px;
+    padding: 6px 9px;
+
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-small);
+
+    color: var(--color-text);
+    font-size: var(--font-small);
+}
+
+.profile-svg-container {
+    width: 100%;
+    min-width: 0;
+    /*height: clamp(400px, 60vh, 620px);*/
+    height: 530px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    background: #fbfcfb;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-small);
+    overscroll-behavior-x: contain;
+}
+
+#profileSvg {
+    display: block;
+    width: auto;
+    height: 500px;
+    max-width: none;
+}
+
+.terrain-controls-panel select {
+    display: block;
+    width: 100%;
+    min-height: 40px;
+    margin-bottom: 10px;
+    padding: 9px 36px 9px 12px;
+
+    appearance: none;
+    background-color: var(--color-surface);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23176b4d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-small);
+
+    color: var(--color-text);
+    font-size: var(--font-small);
+
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.terrain-controls-panel select:hover {
+    border-color: var(--color-accent);
+}
+
+.terrain-controls-panel select:focus {
+    border-color: var(--color-primary-light);
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(23 107 77 / 10%);
+}
+
+.terrain-controls-panel select option {
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+/* ---------------------------------------------------------
+   14. FORM ACCESSIBILITY
+   --------------------------------------------------------- */
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--color-primary-light);
+    outline-offset: 2px;
+}
+
+
+/* ---------------------------------------------------------
+   15. MEDIUM SCREENS
+   --------------------------------------------------------- */
+
+@media (max-width: 1050px) {
+    :root {
+        --sidebar-width: 235px;
+        --layout-gap: 12px;
+        --panel-padding: 13px;
+    }
+
+    .card-header {
+        align-items: flex-start;
+        padding: 14px;
+    }
+
+    .display-toolbar {
+        justify-content: flex-start;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   16. SMALL SCREENS
+   --------------------------------------------------------- */
+
+@media (max-width: 760px) {
+    .site-header {
+        padding: 14px 16px;
+    }
+
+    .site-title h1 {
+        font-size: 1.1rem;
+    }
+
+    .layout {
+        grid-template-columns: minmax(0, 1fr);
+
+        grid-template-areas:
+            "sidebar"
+            "terrain"
+            "analysis"
+            "profile";
+
+        grid-template-rows: auto auto auto auto;
+
+        gap: 12px;
+        padding: 10px;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .card-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 14px;
+    }
+
+    .terrain-heading {
+        flex-basis: auto;
+    }
+
+    .zoom-toolbar {
+        justify-content: flex-start;
+    }
+
+    .display-toolbar {
+        justify-content: flex-start;
+        gap: 10px 14px;
+    }
+
+    .svg-container {
+        flex: none;
+        height: clamp(280px, 65vw, 400px);
+    }
+
+    #terrainSvg {
+        width: 100%;
+        height: 100%;
+    }
+
+    .profile-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .profile-controls {
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .profile-controls select {
+        flex: 1 1 160px;
+    }
+
+    .profile-svg-container {
+        height: 530px;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   17. VERY SMALL SCREENS
+   --------------------------------------------------------- */
+
+@media (max-width: 420px) {
+    :root {
+        --panel-padding: 12px;
+    }
+
+    .display-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .svg-container {
+        height: 300px;
+    }
+
+    .profile-svg-container {
+        /*height: 240px;*/
+        /*height: 450px;*/
+        height: 530px;
+    }
+}
